@@ -7,12 +7,14 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 /**
  * Fragment with file explorer contents
  */
-public class FileExplorerFragment extends Fragment {
+public class FileExplorerFragment extends Fragment implements OnClickListener {
 	
 	public static final String ARG_FILE_SELECTION_ALLOWED = "allow_file_select";
 	
@@ -34,6 +36,13 @@ public class FileExplorerFragment extends Fragment {
 			mFx.setFileSelectionAllowed(allowFileSelect);
 		}
 		mFx.initAdapter(root);
+		Button selectoBtn = (Button) root.findViewById(R.id.btn_activate_selecto);
+		selectoBtn.setOnClickListener(this);
 		return root;
+	}
+
+	@Override
+	public void onClick(View v) {
+		mFx.prepareForSelecto();
 	}
 }

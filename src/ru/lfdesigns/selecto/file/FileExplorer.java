@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -80,6 +81,14 @@ public class FileExplorer implements OnItemClickListener, OnItemLongClickListene
 		mListOfFilesView.setOnItemLongClickListener(this);
 	}
 	
+	public void prepareForSelecto() {
+		BaseAdapter a = (BaseAdapter) mListOfFilesView.getAdapter();
+		if (a instanceof SelectoAdapter) {
+			SelectoAdapter selAdapter = (SelectoAdapter) a;
+			selAdapter.prepareForSelecto();
+		}
+	}
+	
 	@Override
 	public void onItemClick(AdapterView<?> listview, View listitem,
 			int position, long row) {
@@ -122,7 +131,7 @@ public class FileExplorer implements OnItemClickListener, OnItemLongClickListene
 	public boolean onItemLongClick(AdapterView<?> listview, View listitem, int position,
 			long id) {
 		int selMode = -1;
-		FileListAdapter<Item> adapter = null;
+		BaseAdapter adapter = null;
 		switch (mSelectionMode) {
 		case MODE_CLICK:
 			adapter = createMultiSelectAdapter();
@@ -194,20 +203,19 @@ public class FileExplorer implements OnItemClickListener, OnItemLongClickListene
 
 			}
 		}		
-		return createClickAdapter();
+		return (FileListAdapter<Item>) createClickAdapter();
 	}
 	
-	private FileListAdapter<Item> createClickAdapter() {
+	private BaseAdapter createClickAdapter() {
 		FileListAdapter<Item> adapter = new FileListAdapter<Item>(
 				mContext, android.R.layout.select_dialog_item,
 				android.R.id.text1, fileList);
 		return adapter;
 	}
 	
-	private FileListAdapter<Item> createMultiSelectAdapter() {
-		FileListAdapter<Item> adapter = new FileListAdapter<Item>(
-				mContext, android.R.layout.simple_list_item_multiple_choice,
-				android.R.id.text1, fileList);
+	private BaseAdapter createMultiSelectAdapter() {
+		SelectoAdapter adapter = new SelectoAdapter(mContext);
+		adapter.setListItems(fileList);
 		return adapter;
 	}
 

@@ -5,10 +5,16 @@
     tools:context="ru.lfdesigns.selecto.FilesActivity$PlaceholderFragment" >
 
     <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/file_explorer" />
+
+    <Button
+        android:id="@+id/btn_activate_selecto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        layout="@layout/file_explorer" />
+        android:text="Selecto!" />
 
 </RelativeLayout>
