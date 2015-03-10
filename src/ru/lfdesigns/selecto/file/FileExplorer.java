@@ -9,16 +9,20 @@ import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
 /**
  *  A common file explorer UI
  */
-public class FileExplorer implements OnItemClickListener {
+public class FileExplorer implements OnItemClickListener, OnItemLongClickListener {
 	
 	public static final String SEARCH_ENTRY_POINT = "/";
+	public static final int MODE_CLICK = 0;
+	public static final int MODE_SELECTION_MULTI = 1;
 	
+	private int mSelectionMode = MODE_CLICK;
 	ArrayList<String> str = new ArrayList<String>(); // Paths list
 	private Boolean firstLvl = true; // identifies first level when back button is inactive
 
@@ -73,11 +77,15 @@ public class FileExplorer implements OnItemClickListener {
 		mListOfFilesView = (ListView) v.findViewById(R.id.file_list);
 		mListOfFilesView.setAdapter(adapter);
 		mListOfFilesView.setOnItemClickListener(this);
+		mListOfFilesView.setOnItemLongClickListener(this);
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> listview, View listitem,
 			int position, long row) {
+		if (mSelectionMode != MODE_CLICK) // don't allow clicks if choice mode activated
+			return;
+		
 		TextView tv = (TextView) listitem.findViewById(android.R.id.text1);
 		chosenFile = (String) tv.getText();
 		File sel = new File(path + "/" + chosenFile);
@@ -108,6 +116,30 @@ public class FileExplorer implements OnItemClickListener {
 			if (mListener!=null)
 				mListener.OnDialogResult("");
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> listview, View listitem, int position,
+			long id) {
+		int selMode = -1;
+		FileListAdapter<Item> adapter = null;
+		switch (mSelectionMode) {
+		case MODE_CLICK:
+			adapter = createMultiSelectAdapter();
+			mListOfFilesView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			selMode = MODE_SELECTION_MULTI;
+			break;
+		case MODE_SELECTION_MULTI:
+			adapter = createClickAdapter();
+			selMode = MODE_CLICK;
+			break;
+		}
+		if (adapter != null) {
+			mListOfFilesView.setAdapter(adapter);
+			mListOfFilesView.requestLayout();
+			mSelectionMode = selMode;
+		}
+		return true;
 	}
 	/**
 	 * Populates items adapter with files from current folder
@@ -161,10 +193,22 @@ public class FileExplorer implements OnItemClickListener {
 			} else {
 
 			}
-		}
+		}		
+		return createClickAdapter();
+	}
+	
+	private FileListAdapter<Item> createClickAdapter() {
 		FileListAdapter<Item> adapter = new FileListAdapter<Item>(
 				mContext, android.R.layout.select_dialog_item,
 				android.R.id.text1, fileList);
 		return adapter;
 	}
+	
+	private FileListAdapter<Item> createMultiSelectAdapter() {
+		FileListAdapter<Item> adapter = new FileListAdapter<Item>(
+				mContext, android.R.layout.simple_list_item_multiple_choice,
+				android.R.id.text1, fileList);
+		return adapter;
+	}
+
 }
