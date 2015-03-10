@@ -1,6 +1,7 @@
-package ru.lfdesigns.selecto.file;
+package ru.lfdesigns.selecto.ui;
 
 import ru.lfdesigns.selecto.R;
+import ru.lfdesigns.selecto.file.FileExplorer;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -26,12 +27,13 @@ public class FileExplorerFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View root = LayoutInflater.from(getActivity()).inflate(R.layout.file_explorer, container, false);
+		View root = inflater.inflate(R.layout.fragment_files, container, false);
 		if (getArguments()!=null){
 			Bundle args = getArguments();
 			boolean allowFileSelect = args.getBoolean(ARG_FILE_SELECTION_ALLOWED);
 			mFx.setFileSelectionAllowed(allowFileSelect);
 		}
+		mFx.initAdapter(root);
 		return root;
 	}
 }

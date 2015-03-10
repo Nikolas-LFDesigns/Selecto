@@ -4,4 +4,11 @@
     android:layout_height="match_parent"
     tools:context="ru.lfdesigns.selecto.FilesActivity$PlaceholderFragment" >
 
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        layout="@layout/file_explorer" />
+
 </RelativeLayout>
